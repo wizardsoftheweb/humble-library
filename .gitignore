@@ -1,2 +1,4 @@
 .env
 go_build_humble_library
+cp.out
+coverage.html
