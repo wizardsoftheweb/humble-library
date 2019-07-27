@@ -1,6 +1,8 @@
 package wotwhb
 
 import (
+	"os"
+
 	"github.com/sirupsen/logrus"
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
@@ -23,36 +25,39 @@ var (
 		FatalLevelStyle: "red+b",
 		PanicLevelStyle: "red+B",
 	}
+	Logger = &logrus.Logger{
+		Out:       os.Stderr,
+		Formatter: formatter,
+	}
 )
 
 func setLoggerLevel(verbosityLevel int) {
 	switch {
 	case -2 >= verbosityLevel:
-		logrus.SetLevel(logrus.PanicLevel)
+		Logger.SetLevel(logrus.PanicLevel)
 		break
 	case -1 == verbosityLevel:
-		logrus.SetLevel(logrus.FatalLevel)
+		Logger.SetLevel(logrus.FatalLevel)
 		break
 	case 0 == verbosityLevel:
-		logrus.SetLevel(logrus.ErrorLevel)
+		Logger.SetLevel(logrus.ErrorLevel)
 		break
 	case 1 == verbosityLevel:
-		logrus.SetLevel(logrus.WarnLevel)
+		Logger.SetLevel(logrus.WarnLevel)
 		break
 	case 2 == verbosityLevel:
-		logrus.SetLevel(logrus.InfoLevel)
+		Logger.SetLevel(logrus.InfoLevel)
 		break
 	case 3 == verbosityLevel:
-		logrus.SetLevel(logrus.TraceLevel)
+		Logger.SetLevel(logrus.TraceLevel)
 		break
 	default:
-		logrus.SetLevel(logrus.DebugLevel)
+		Logger.SetLevel(logrus.DebugLevel)
 		break
 	}
 }
 
 func BootstrapLogger(verbosityLevel int) {
 	formatter.SetColorScheme(formatterColorScheme)
-	logrus.SetFormatter(formatter)
 	setLoggerLevel(verbosityLevel)
 }
