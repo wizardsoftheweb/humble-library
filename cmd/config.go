@@ -1,6 +1,6 @@
 package wotwhb
 
-func BootstrapConfig() {
-	ensureDirectoryExists(configDirectory)
-	ensureDirectoryExists(downloadDirectory)
+func BootstrapConfig(configPath, downloadPath string) {
+	ensureDirectoryExists(configPath)
+	ensureDirectoryExists(downloadPath)
 }
