@@ -46,6 +46,7 @@ var PackageCmd = &cobra.Command{
 
 func PackageCmdPersistentPreRun(cmd *cobra.Command, args []string) {
 	BootstrapLogger(VerbosityFlagValue)
+	BootstrapConfig(ConfigDirectoryFlagValue, DownloadDirectoryFlagValue)
 }
 
 func PackageCmdRun(cmd *cobra.Command, args []string) {
