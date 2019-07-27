@@ -5,16 +5,36 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var rootCmd = &cobra.Command{
-	Use:   "wotw-hb",
-	Short: "WIP Humble Bundle CLI",
-	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Println("rad")
-	},
+var PackageVersion = "0.0.0"
+var VerbosityFlagValue int
+
+func init() {
+	PackageCmd.PersistentFlags().CountVarP(
+		&VerbosityFlagValue,
+		"verbose",
+		"v",
+		"Increases application verbosity",
+	)
 }
 
 func Execute() {
-	if err := rootCmd.Execute(); nil != err {
+	if err := PackageCmd.Execute(); nil != err {
 		logrus.Fatal(err)
 	}
+}
+
+var PackageCmd = &cobra.Command{
+	Use:              "wotw-hb",
+	Version:          PackageVersion,
+	Short:            "WIP Humble Bundle CLI",
+	PersistentPreRun: PackageCmdPersistentPreRun,
+	Run:              PackageCmdRun,
+}
+
+func PackageCmdPersistentPreRun(cmd *cobra.Command, args []string) {
+	BootstrapLogger(VerbosityFlagValue)
+}
+
+func PackageCmdRun(cmd *cobra.Command, args []string) {
+	_ = cmd.Help()
 }
