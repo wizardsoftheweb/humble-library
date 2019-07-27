@@ -5,15 +5,15 @@ import (
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
 
-func BootstrapLogger(verbosityLevel int) {
-	formatter := &prefixed.TextFormatter{
+var (
+	formatter = &prefixed.TextFormatter{
 		FullTimestamp:    true,
 		TimestampFormat:  "2006-01-02 15:04:05",
 		QuoteEmptyFields: true,
 		ForceFormatting:  true,
 		ForceColors:      true,
 	}
-	formatter.SetColorScheme(&prefixed.ColorScheme{
+	formatterColorScheme = &prefixed.ColorScheme{
 		PrefixStyle:     "cyan",
 		TimestampStyle:  "black+h",
 		DebugLevelStyle: "blue+h:",
@@ -22,8 +22,10 @@ func BootstrapLogger(verbosityLevel int) {
 		ErrorLevelStyle: "red",
 		FatalLevelStyle: "red+b",
 		PanicLevelStyle: "red+B",
-	})
-	logrus.SetFormatter(formatter)
+	}
+)
+
+func setLoggerLevel(verbosityLevel int) {
 	switch {
 	case -2 >= verbosityLevel:
 		logrus.SetLevel(logrus.PanicLevel)
@@ -47,5 +49,10 @@ func BootstrapLogger(verbosityLevel int) {
 		logrus.SetLevel(logrus.DebugLevel)
 		break
 	}
+}
 
+func BootstrapLogger(verbosityLevel int) {
+	formatter.SetColorScheme(formatterColorScheme)
+	logrus.SetFormatter(formatter)
+	setLoggerLevel(verbosityLevel)
 }
