@@ -1,7 +1,6 @@
 package wotwhb
 
 import (
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -17,10 +16,8 @@ func init() {
 	)
 }
 
-func Execute() {
-	if err := PackageCmd.Execute(); nil != err {
-		logrus.Fatal(err)
-	}
+func Execute() error {
+	return PackageCmd.Execute()
 }
 
 var PackageCmd = &cobra.Command{
