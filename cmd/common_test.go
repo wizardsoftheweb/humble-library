@@ -10,13 +10,13 @@ import (
 func Test(t *testing.T) { TestingT(t) }
 
 type BaseSuite struct {
-	workingDir string
+	WorkingDir string
 }
 
 var _ = Suite(&BaseSuite{})
 
 func (s *BaseSuite) SetUpSuite(c *C) {
-	s.workingDir = c.MkDir()
-	ConfigDirectoryFlagValue = filepath.Join(s.workingDir, "config")
-	DownloadDirectoryFlagValue = filepath.Join(s.workingDir, "downloads")
+	s.WorkingDir = c.MkDir()
+	ConfigDirectoryFlagValue = filepath.Join(s.WorkingDir, "config")
+	DownloadDirectoryFlagValue = filepath.Join(s.WorkingDir, "downloads")
 }
