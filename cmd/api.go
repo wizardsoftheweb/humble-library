@@ -31,7 +31,7 @@ func createNewRequest(resource string, data url.Values, csrfCookie *http.Cookie)
 	return request
 }
 
-func parseResponseBody(body io.ReadCloser) []byte {
+func parseResponseBody(body io.Reader) []byte {
 	contents, err := ioutil.ReadAll(body)
 	fatalCheck(err)
 	return contents

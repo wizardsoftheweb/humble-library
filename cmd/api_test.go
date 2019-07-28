@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 
 	. "gopkg.in/check.v1"
 )
@@ -39,4 +40,10 @@ func (s *ApiSuite) TestCreateNewPostRequest(c *C) {
 	fmt.Println(request.Cookies())
 	value := request.Header.Get("csrf-prevention-token")
 	c.Assert(value, Equals, s.csrfCookie.Value)
+}
+
+func (s *ApiSuite) TestParseBody(c *C) {
+	body := `{"test":"body"}`
+	results := parseResponseBody(strings.NewReader(body))
+	c.Assert(results, DeepEquals, []byte(body))
 }
