@@ -12,6 +12,9 @@ func NewUniqueStringList(elements ...string) *UniqueStringList {
 
 func (u *UniqueStringList) Add(elements ...string) *UniqueStringList {
 	for _, element := range elements {
+		if "" == element {
+			continue
+		}
 		if _, ok := u.tracking[element]; !ok {
 			u.tracking[element] = true
 			u.contents = append(u.contents, element)
