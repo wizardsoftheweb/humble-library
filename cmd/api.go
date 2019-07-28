@@ -1,6 +1,7 @@
 package wotwhb
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -59,36 +60,42 @@ func executeRequest(client HttpClient, request *http.Request) (*http.Response, [
 
 func updateCookies(jar *cookiejar.Jar, response *http.Response) {}
 
-func loginWithRecaptcha(client *http.Client, jar *cookiejar.Jar, csrfCookie *http.Cookie) string {
+func loginWithRecaptcha(client HttpClient, jar *cookiejar.Jar, csrfCookie *http.Cookie) string {
 	return ""
 }
 
-func loginWithGuard(client *http.Client, jar *cookiejar.Jar, csrfCookie *http.Cookie, skipCode string) string {
+func loginWithGuard(client HttpClient, jar *cookiejar.Jar, csrfCookie *http.Cookie, skipCode string) string {
 	return ""
 }
 
-func authenticate(client *http.Client, jar *cookiejar.Jar, csrfCookie *http.Cookie) {}
+func discoverCsrfCookie(response *http.Response, jar *cookiejar.Jar) *http.Cookie {
+	for _, cookie := range response.Cookies() {
+		if "csrf_cookie" == cookie.Name {
+			jar.SetCookies(
+				response.Request.URL,
+				append(
+					jar.Cookies(response.Request.URL),
+					cookie,
+				),
+			)
+			return cookie
+		}
+	}
+	fatalCheck(errors.New("unable to find CSRF Token"))
+	return nil
+}
 
-func getResource(client *http.Client, jar *cookiejar.Jar, resource string, data url.Values, csrfCookie *http.Cookie) []byte {
+func authenticate(client HttpClient, jar *cookiejar.Jar, csrfCookie *http.Cookie) {}
+
+func getResource(client HttpClient, jar *cookiejar.Jar, resource string, data url.Values, csrfCookie *http.Cookie) []byte {
 	request := createNewRequest(resource, data, csrfCookie)
 	response, body := executeRequest(client, request)
 	if request.URL.Path == response.Request.URL.Path {
 		updateCookies(jar, response)
 	} else {
-		for _, cookie := range response.Cookies() {
-			if "csrf_cookie" == cookie.Name {
-				jar.SetCookies(
-					response.Request.URL,
-					append(
-						jar.Cookies(response.Request.URL),
-						cookie,
-					),
-				)
-				authenticate(client, jar, cookie)
-				return getResource(client, jar, resource, data, csrfCookie)
-			}
-		}
-		Logger.Fatal("No CSRF Token")
+		csrfCookie = discoverCsrfCookie(response, jar)
+		authenticate(client, jar, csrfCookie)
+		return getResource(client, jar, resource, data, csrfCookie)
 	}
 	return body
 }
