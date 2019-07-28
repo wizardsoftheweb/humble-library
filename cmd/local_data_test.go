@@ -10,21 +10,21 @@ type LocalDataSuite struct {
 	BaseSuite
 }
 
-var savedOrderListTest = []string{"one", "two", "three"}
+var savedKeyListTest = []string{"one", "two", "three"}
 
 var _ = Suite(&LocalDataSuite{})
 
 func (s *LocalDataSuite) SetUpTest(c *C) {
-	writeJsonToFile(savedOrderListTest, filepath.Join(ConfigDirectoryFlagValue, orderKeyListFileBasename))
+	writeJsonToFile(savedKeyListTest, filepath.Join(ConfigDirectoryFlagValue, orderKeyListFileBasename))
 }
 
-func (s *LocalDataSuite) TestParseRawOrderList(c *C) {
+func (s *LocalDataSuite) TestParseRawKeyList(c *C) {
 	testData := []byte(`[{"gamekey":"one"},{"gamekey":"two"},{"gamekey":"three"}]`)
-	keys := parseRawOrderList(testData)
-	c.Assert(keys, DeepEquals, savedOrderListTest)
+	keys := parseRawKeyList(testData)
+	c.Assert(keys, DeepEquals, savedKeyListTest)
 }
 
-func (s *LocalDataSuite) TestLoadSavedOrderList(c *C) {
-	results := loadSavedOrderList()
-	c.Assert(results, DeepEquals, savedOrderListTest)
+func (s *LocalDataSuite) TestLoadSavedKeyList(c *C) {
+	results := loadSavedKeyList()
+	c.Assert(results, DeepEquals, savedKeyListTest)
 }

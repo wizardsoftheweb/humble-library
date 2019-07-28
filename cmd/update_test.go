@@ -32,10 +32,10 @@ func (s *UpdateSuite) TearDownTest(c *C) {
 	Logger.SetLevel(defaultLoggerLevel)
 }
 
-func (s *UpdateSuite) TestUpdateOrderListCmdRun(c *C) {
+func (s *UpdateSuite) TestUpdateKeyListCmdRun(c *C) {
 	c.Assert(
 		func() {
-			UpdateOrderListCmdRun(s.Command, s.Args)
+			UpdateKeyListCmdRun(s.Command, s.Args)
 		},
 		PanicMatches,
 		".*EOF.*",
