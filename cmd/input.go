@@ -18,9 +18,9 @@ func buildPrompt(prompt string) string {
 	return say
 }
 
-func getInput(prompt string) string {
+func getInput(longPrompt, shortPrompt string) string {
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Printf("%s\n", buildPrompt(prompt))
+	fmt.Printf("%s\n%s: ", buildPrompt(longPrompt), shortPrompt)
 	input, err := reader.ReadString('\n')
 	fatalCheck(err)
 	return strings.TrimSpace(input)
