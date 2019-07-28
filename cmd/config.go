@@ -19,9 +19,7 @@ func buildSession() (*http.Client, *cookiejar.Jar) {
 		Filename:         filepath.Join(ConfigDirectoryFlagValue, cookieFileBasename),
 	}
 	jar, err := cookiejar.New(&options)
-	if nil != err {
-		Logger.Fatal(err)
-	}
+	fatalCheck(err)
 	Logger.Trace(jar.AllCookies())
 	client := &http.Client{
 		Jar: jar,
