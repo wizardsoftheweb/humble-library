@@ -36,7 +36,7 @@ func (s *WotwHbSuite) TestPackageCmdPersistentPreRun(c *C) {
 
 func (s *WotwHbSuite) TestPackageCmdRun(c *C) {
 	c.Assert(PackageCmd.Version, Equals, PackageVersion)
-	PackageCmdRun(s.Command, s.Args)
+	HelpOnly(s.Command, s.Args)
 	c.Assert(PackageCmd.Version, Equals, PackageVersion)
 }
 
