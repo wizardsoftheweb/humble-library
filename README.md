@@ -1,4 +1,5 @@
 # `humble-library` WIP
+[![CircleCI](https://circleci.com/gh/wizardsoftheweb/humble-library/tree/dev.svg?style=svg)](https://circleci.com/gh/wizardsoftheweb/humble-library/tree/dev) [![Coverage Status](https://coveralls.io/repos/github/wizardsoftheweb/humble-library-go/badge.svg?branch=dev)](https://coveralls.io/github/wizardsoftheweb/humble-library-go?branch=dev)
 
 The repo right now is basically a massive PoC and probably isn't useful until it becomes a CLI.
 
