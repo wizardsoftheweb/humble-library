@@ -52,16 +52,8 @@ func queryAllOrders(printer CanPrint, keys []string) []map[string]interface{} {
 	allOrders := make([]map[string]interface{}, size)
 	for index, key := range keys {
 		var parsedOrder map[string]interface{}
-		switch {
-		case 0 == index%50:
-			Logger.Info(fmt.Sprintf("Queried %d out of %d", index, size))
-			break
-		case 0 == index%10:
+		if 0 == index%10 {
 			Logger.Trace(fmt.Sprintf("Queried %d out of %d", index, size))
-			break
-		case 0 == index%5:
-			Logger.Debug(fmt.Sprintf("Queried %d out of %d", index, size))
-			break
 		}
 		rawOrder := queryIndividualOrder(printer, client, jar, key)
 		err := json.Unmarshal(rawOrder, &parsedOrder)

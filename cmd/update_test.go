@@ -42,6 +42,25 @@ func (s *UpdateSuite) TestUpdateKeyListCmdRun(c *C) {
 	)
 }
 
+func (s *UpdateSuite) TestUpdateOrderListCmdRun(c *C) {
+	c.Assert(
+		func() {
+			UpdateOrderListCmdRun(s.Command, s.Args)
+		},
+		PanicMatches,
+		".*JSON.*",
+	)
+	ForceRefreshConfigFlag = true
+	c.Assert(
+		func() {
+			UpdateOrderListCmdRun(s.Command, s.Args)
+		},
+		PanicMatches,
+		".*EOF.*",
+	)
+	ForceRefreshConfigFlag = false
+}
+
 func (s *UpdateSuite) TestUpdateCmdRun(c *C) {
 	c.Assert(
 		func() {
