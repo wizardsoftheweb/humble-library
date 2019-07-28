@@ -11,8 +11,6 @@ import (
 
 type UpdateSuite struct {
 	BaseSuite
-	Command *cobra.Command
-	Args    []string
 }
 
 func (s *UpdateSuite) Printf(format string, args ...interface{}) {}

@@ -7,8 +7,6 @@ import (
 
 type WotwHbSuite struct {
 	BaseSuite
-	Command *cobra.Command
-	Args    []string
 }
 
 const defaultVerbosityLevelFlag = 0
