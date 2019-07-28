@@ -1,6 +1,8 @@
 package wotwhb
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -20,4 +22,15 @@ func (s *FileSystemSuite) TestEnsureDirectoryExists(c *C) {
 	ensureDirectoryExists(directoryName)
 	_, err = os.Stat(directoryName)
 	c.Assert(err, IsNil)
+}
+
+func (s *FileSystemSuite) TestWriteJson(c *C) {
+	testContents := []int{1, 2, 3}
+	fileName := filepath.Join(s.WorkingDir, "test.json")
+	writeJsonToFile(testContents, fileName)
+	contents, _ := ioutil.ReadFile(fileName)
+	var keys []int
+	err := json.Unmarshal(contents, &keys)
+	c.Assert(err, IsNil)
+	c.Assert(testContents, DeepEquals, keys)
 }
