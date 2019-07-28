@@ -2,12 +2,18 @@ package wotwhb
 
 import (
 	"bufio"
-	"fmt"
+	"io"
 	"os"
 	"strings"
 
 	cowsay "github.com/Code-Hex/Neo-cowsay"
 )
+
+var inputReader io.Reader = os.Stdin
+
+type CanPrint interface {
+	Printf(format string, args ...interface{})
+}
 
 func buildPrompt(prompt string) string {
 	say, err := cowsay.Say(
@@ -18,9 +24,9 @@ func buildPrompt(prompt string) string {
 	return say
 }
 
-func getInput(longPrompt, shortPrompt string) string {
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Printf("%s\n%s: ", buildPrompt(longPrompt), shortPrompt)
+func getInput(printer CanPrint, longPrompt, shortPrompt string) string {
+	reader := bufio.NewReader(inputReader)
+	printer.Printf("%s\n%s: ", buildPrompt(longPrompt), shortPrompt)
 	input, err := reader.ReadString('\n')
 	fatalCheck(err)
 	return strings.TrimSpace(input)
