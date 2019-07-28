@@ -1,6 +1,7 @@
 package wotwhb
 
 import (
+	"os"
 	"path/filepath"
 )
 
@@ -11,6 +12,7 @@ const (
 )
 
 var (
-	configDirectory   = filepath.Clean(filepath.Join("~", ".config", "wotw", "humblebundle"))
-	downloadDirectory = filepath.Clean(filepath.Join("~", "Downloads"))
+	homeDirectory     = os.Getenv("HOME")
+	configDirectory   = filepath.Clean(filepath.Join(homeDirectory, ".config", "wotw", "humblebundle"))
+	downloadDirectory = filepath.Clean(filepath.Join(homeDirectory, "Downloads"))
 )

@@ -17,14 +17,14 @@ func init() {
 		"Increases application verbosity",
 	)
 	PackageCmd.PersistentFlags().StringVarP(
-		&DownloadDirectoryFlagValue,
+		&ConfigDirectoryFlagValue,
 		"config-directory",
 		"c",
 		configDirectory,
 		"Location to store configuration files",
 	)
 	PackageCmd.PersistentFlags().StringVarP(
-		&ConfigDirectoryFlagValue,
+		&DownloadDirectoryFlagValue,
 		"download-directory",
 		"d",
 		downloadDirectory,
