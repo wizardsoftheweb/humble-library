@@ -20,14 +20,18 @@ type HbPayee struct {
 	MachineName string `json:"machine_name"`
 }
 
+type HbSubProductDownloadOptionsDict struct {
+	Is64BitToggle int `json:"is64bittoggle"`
+}
+
 type HbSubProductDownload struct {
-	AndroidAppOnly        bool        `json:"android_app_only"`
-	DownloadIdentifer     string      `json:"download_identifier"`
-	DownloadStruct        interface{} `json:"download_struct"`
-	DownloadVersionNumber int         `json:"download_version_number"`
-	MachineName           string      `json:"machine_name"`
-	OptionsDict           interface{} `json:"options_dict"`
-	Platform              string      `json:"platform"`
+	AndroidAppOnly        bool                            `json:"android_app_only"`
+	DownloadIdentifer     string                          `json:"download_identifier"`
+	DownloadStruct        interface{}                     `json:"download_struct"`
+	DownloadVersionNumber int                             `json:"download_version_number"`
+	MachineName           string                          `json:"machine_name"`
+	OptionsDict           HbSubProductDownloadOptionsDict `json:"options_dict"`
+	Platform              string                          `json:"platform"`
 }
 
 type HbSubProduct struct {
