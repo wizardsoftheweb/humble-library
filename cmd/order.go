@@ -4,6 +4,8 @@ import (
 	"time"
 )
 
+type HbPathIds []string
+
 type HbOrder struct {
 	AmountSpent  float64     `json:"amount_spent"`
 	Claimed      bool        `json:"claimed"`
@@ -12,7 +14,7 @@ type HbOrder struct {
 	Gamekey      string      `json:"gamekey"`
 	IsGiftee     bool        `json:"is_giftee"`
 	MissedCredit interface{} `json:"missed_credit"`
-	PathIds      interface{} `json:"path_ids"`
+	PathIds      HbPathIds   `json:"path_ids"`
 	Product      interface{} `json:"product"`
 	Subproducts  interface{} `json:"subproducts"`
 	Total        float64     `json:"total"`
