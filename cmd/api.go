@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 
 	cookiejar "github.com/juju/persistent-cookiejar"
@@ -69,7 +70,55 @@ func executeRequest(client HttpClient, request *http.Request) (*http.Response, [
 	return response, body
 }
 
-func updateCookies(jar *cookiejar.Jar, response *http.Response) {}
+func sanitizeCookieString(cookieString string) string {
+	cleanedValue := strings.ReplaceAll(cookieString, `\075`, "=")
+	cleanedValue = strings.ReplaceAll(cleanedValue, `"`, "")
+	return cleanedValue
+}
+
+func parseRawCookie(rawCookie string) *http.Cookie {
+	explodedCookie := strings.Split(rawCookie, ";")
+	splitValue := strings.Split(explodedCookie[0], "=")
+	newCookie := &http.Cookie{
+		Name:   splitValue[0],
+		Value:  sanitizeCookieString(splitValue[1]),
+		Raw:    sanitizeCookieString(rawCookie),
+		Domain: baseDomain,
+	}
+	for _, value := range explodedCookie[1:] {
+		splitValue := strings.Split(strings.TrimSpace(value), "=")
+		switch strings.ToLower(splitValue[0]) {
+		case "max-age":
+			newCookie.MaxAge, _ = strconv.Atoi(splitValue[1])
+		case "path":
+			newCookie.Path = splitValue[1]
+		case "secure":
+			newCookie.Secure = true
+		case "httponly":
+			newCookie.HttpOnly = true
+		case "domain":
+			newCookie.Domain = splitValue[1]
+		}
+	}
+	return newCookie
+}
+
+func updateCookies(jar *cookiejar.Jar, response *http.Response) {
+	rawCsrfCookies := response.Header["Set-Cookie"]
+	parsedCsrfCookies := make([]*http.Cookie, len(rawCsrfCookies))
+	for index, rawCookie := range rawCsrfCookies {
+		parsedCsrfCookies[index] = parseRawCookie(rawCookie)
+	}
+	jar.SetCookies(
+		response.Request.URL,
+		append(
+			jar.Cookies(response.Request.URL),
+			parsedCsrfCookies...,
+		),
+	)
+	err := jar.Save()
+	fatalCheck(err)
+}
 
 func loginWithRecaptcha(printer CanPrint, client HttpClient, jar *cookiejar.Jar, csrfCookie *http.Cookie) (string, string, []byte) {
 	username := getInput(printer, usernameLongPrompt, usernameShortPrompt)

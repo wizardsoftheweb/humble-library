@@ -22,6 +22,12 @@ type ApiSuite struct {
 }
 
 const testBody = `{"test":"body"}`
+const rawCookie = "test=value; Max-Age=1564282717; Path=/; Secure; HttpOnly; Domain=qqq"
+const recaptchaInputTestResults = `test1
+test2
+test3
+test3
+`
 
 func (s *ApiSuite) Printf(format string, args ...interface{}) {}
 
@@ -53,12 +59,6 @@ func (h BadHttpClientMock) Do(request *http.Request) (*http.Response, error) {
 }
 
 var _ = Suite(&ApiSuite{})
-
-var recaptchaInputTestResults = `test1
-test2
-test3
-test3
-`
 
 func (s *ApiSuite) SetUpTest(c *C) {
 	s.resource = loginResource
@@ -158,4 +158,39 @@ func (s *ApiSuite) TestGetResource(c *C) {
 		PanicMatches,
 		".*CSRF.*",
 	)
+}
+
+func (s *ApiSuite) TestSanitizeCookie(c *C) {
+	c.Assert(
+		sanitizeCookieString(`"qqq\075"`),
+		Equals,
+		"qqq=",
+	)
+}
+
+func (s *ApiSuite) TestParseRawCookie(c *C) {
+	parsedCookie := parseRawCookie(rawCookie)
+	c.Assert(parsedCookie.Name, Equals, "test")
+	c.Assert(parsedCookie.Value, Equals, "value")
+	c.Assert(parsedCookie.MaxAge, Equals, 1564282717)
+	c.Assert(parsedCookie.Path, Equals, "/")
+	c.Assert(parsedCookie.Secure, Equals, true)
+	c.Assert(parsedCookie.HttpOnly, Equals, true)
+	c.Assert(parsedCookie.Domain, Equals, "qqq")
+}
+
+func (s *ApiSuite) TestUpdateCookies(c *C) {
+	response := &http.Response{
+		Request: &http.Request{
+			URL: &url.URL{
+				Scheme: "https",
+				Host:   baseDomain,
+				Path:   s.resource,
+			},
+		},
+		Header: http.Header{},
+	}
+	response.Header.Set("Set-Cookie", s.csrfCookie.String())
+	updateCookies(s.jar, response)
+	c.Assert(len(s.jar.AllCookies()), Equals, 1)
 }
