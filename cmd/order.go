@@ -1,9 +1,5 @@
 package wotwhb
 
-import (
-	"time"
-)
-
 // jq '[.[] | select(0 < (.subproducts | length)).subproducts[] | select(0 < (.downloads | length)).downloads[] | select(0 < (.download_struct | length)).download_struct[] | select(.asm_config != null).asm_config | keys] | flatten | unique' all-orders.json
 type HbSubProductDownloadDownloadStructAsmConfig struct {
 	CloudMountPoint string `json:"cloudMountPoint"`
@@ -38,7 +34,7 @@ type HbSubProductDownloadDownloadStruct struct {
 	Small            int                                           `json:"small"`
 	Timestamp        int64                                         `json:"timestamp"`
 	Timetstamp       int64                                         `json:"timetstamp"`
-	UploadedAt       time.Time                                     `json:"uploaded_at"`
+	UploadedAt       string                                        `json:"uploaded_at"`
 	Url              HbSubProductDownloadDownloadStructUrl         `json:"url"`
 	UsesKindleSender bool                                          `json:"uses_kindle_sender"`
 }
@@ -95,7 +91,7 @@ type HbSubProduct struct {
 type HbOrder struct {
 	AmountSpent  float64        `json:"amount_spent"`
 	Claimed      bool           `json:"claimed"`
-	Created      time.Time      `json:"created"`
+	Created      string         `json:"created"`
 	Currency     string         `json:"currency"`
 	Gamekey      string         `json:"gamekey"`
 	IsGiftee     bool           `json:"is_giftee"`
