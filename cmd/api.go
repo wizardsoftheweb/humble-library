@@ -9,8 +9,11 @@ import (
 	"strings"
 
 	cookiejar "github.com/juju/persistent-cookiejar"
-	"github.com/sirupsen/logrus"
 )
+
+type HttpClient interface {
+	Do(request *http.Request) (*http.Response, error)
+}
 
 func createNewRequest(resource string, data url.Values, csrfCookie *http.Cookie) *http.Request {
 	var request *http.Request
@@ -37,10 +40,10 @@ func parseResponseBody(body io.Reader) []byte {
 	return contents
 }
 
-func executeRequest(client *http.Client, request *http.Request) (*http.Response, []byte) {
+func executeRequest(client HttpClient, request *http.Request) (*http.Response, []byte) {
 	response, err := client.Do(request)
 	fatalCheck(err)
-	logrus.Debug(
+	Logger.Debug(
 		fmt.Sprintf(
 			"%s->%s status: %s\n",
 			request.URL.Path,

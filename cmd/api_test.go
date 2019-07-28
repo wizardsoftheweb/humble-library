@@ -1,7 +1,6 @@
 package wotwhb
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -15,6 +14,8 @@ type ApiSuite struct {
 	postData   url.Values
 	csrfCookie *http.Cookie
 }
+
+const testBody = `{"test":"body"}`
 
 var _ = Suite(&ApiSuite{})
 
@@ -37,13 +38,23 @@ func (s *ApiSuite) TestCreateNewPostRequest(c *C) {
 	request := createNewRequest(s.resource, s.postData, nil)
 	c.Assert(request.Method, Equals, "POST")
 	request = createNewRequest(s.resource, s.postData, s.csrfCookie)
-	fmt.Println(request.Cookies())
 	value := request.Header.Get("csrf-prevention-token")
 	c.Assert(value, Equals, s.csrfCookie.Value)
 }
 
 func (s *ApiSuite) TestParseBody(c *C) {
-	body := `{"test":"body"}`
-	results := parseResponseBody(strings.NewReader(body))
-	c.Assert(results, DeepEquals, []byte(body))
+	results := parseResponseBody(strings.NewReader(testBody))
+	c.Assert(results, DeepEquals, []byte(testBody))
+}
+
+func (s *ApiSuite) TestExecuteResponse(c *C) {
+	request := &http.Request{
+		Method: "GET",
+		URL: &url.URL{
+			Path: s.resource,
+		},
+	}
+	response, body := executeRequest(s.HttpClient, request)
+	c.Assert(body, DeepEquals, []byte(testBody))
+	c.Assert(response.Request.URL.Path, Equals, request.URL.Path)
 }
