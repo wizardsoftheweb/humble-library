@@ -29,6 +29,7 @@ var (
 		Out:       os.Stderr,
 		Formatter: formatter,
 	}
+	fatalHandler = Logger.Fatal
 )
 
 func setLoggerLevel(verbosityLevel int) {
@@ -60,4 +61,10 @@ func setLoggerLevel(verbosityLevel int) {
 func BootstrapLogger(verbosityLevel int) {
 	formatter.SetColorScheme(formatterColorScheme)
 	setLoggerLevel(verbosityLevel)
+}
+
+func fatalCheck(err error) {
+	if nil != err {
+		fatalHandler(err)
+	}
 }

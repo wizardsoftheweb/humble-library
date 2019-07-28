@@ -6,6 +6,8 @@ import (
 
 var PackageVersion = "0.0.0"
 var VerbosityFlagValue int
+var ConfigDirectoryFlagValue string
+var DownloadDirectoryFlagValue string
 
 func init() {
 	PackageCmd.PersistentFlags().CountVarP(
@@ -13,6 +15,20 @@ func init() {
 		"verbose",
 		"v",
 		"Increases application verbosity",
+	)
+	PackageCmd.PersistentFlags().StringVarP(
+		&DownloadDirectoryFlagValue,
+		"config-directory",
+		"c",
+		configDirectory,
+		"Location to store configuration files",
+	)
+	PackageCmd.PersistentFlags().StringVarP(
+		&ConfigDirectoryFlagValue,
+		"download-directory",
+		"d",
+		downloadDirectory,
+		"Location to store downloads",
 	)
 }
 
@@ -30,6 +46,7 @@ var PackageCmd = &cobra.Command{
 
 func PackageCmdPersistentPreRun(cmd *cobra.Command, args []string) {
 	BootstrapLogger(VerbosityFlagValue)
+	BootstrapConfig(ConfigDirectoryFlagValue, DownloadDirectoryFlagValue)
 }
 
 func PackageCmdRun(cmd *cobra.Command, args []string) {
