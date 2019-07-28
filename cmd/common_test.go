@@ -4,6 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/spf13/cobra"
 	. "gopkg.in/check.v1"
 )
 
@@ -11,6 +12,8 @@ func Test(t *testing.T) { TestingT(t) }
 
 type BaseSuite struct {
 	WorkingDir string
+	Command    *cobra.Command
+	Args       []string
 }
 
 var savedKeyListTest = []string{"one", "two", "three"}
@@ -23,4 +26,6 @@ func (s *BaseSuite) SetUpSuite(c *C) {
 	fatalHandler = func(args ...interface{}) { panic(args[0]) }
 	BootstrapConfig(ConfigDirectoryFlagValue, DownloadDirectoryFlagValue)
 	writeJsonToFile(savedKeyListTest, filepath.Join(ConfigDirectoryFlagValue, orderKeyListFileBasename))
+	s.Command = &cobra.Command{}
+	s.Args = []string{}
 }
