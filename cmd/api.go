@@ -10,10 +10,21 @@ import (
 	"strings"
 
 	cookiejar "github.com/juju/persistent-cookiejar"
+	"github.com/spyzhov/ajson"
 )
 
 type HttpClient interface {
 	Do(request *http.Request) (*http.Response, error)
+}
+
+type ResponseGuardNeeded struct {
+	Required bool     `json:"humble_guard_required"`
+	Code     []string `json:"skip_code"`
+}
+
+type ResponseLoginSuccessful struct {
+	UserTerms interface{} `json:"user_terms_opt_in_data"`
+	Goto      string      `json:"goto"`
 }
 
 func createNewRequest(resource string, data url.Values, csrfCookie *http.Cookie) *http.Request {
@@ -60,12 +71,26 @@ func executeRequest(client HttpClient, request *http.Request) (*http.Response, [
 
 func updateCookies(jar *cookiejar.Jar, response *http.Response) {}
 
-func loginWithRecaptcha(client HttpClient, jar *cookiejar.Jar, csrfCookie *http.Cookie) string {
-	return ""
+func loginWithRecaptcha(printer CanPrint, client HttpClient, jar *cookiejar.Jar, csrfCookie *http.Cookie) (string, string, []byte) {
+	username := getInput(printer, usernameLongPrompt, usernameShortPrompt)
+	password := getInput(printer, passwordLongPrompt, passwordShortPrompt)
+	data := url.Values{}
+	data.Set("ajax", "true")
+	data.Set("username", username)
+	data.Set("password", password)
+	data.Set("recaptcha_challenge_field", "")
+	data.Set("recaptcha_response_field", getInput(printer, recaptchaLongPrompt, recaptchaShortPrompt))
+	return username, password, getResource(printer, client, jar, loginResource, data, csrfCookie)
 }
 
-func loginWithGuard(client HttpClient, jar *cookiejar.Jar, csrfCookie *http.Cookie, skipCode string) string {
-	return ""
+func loginWithGuard(printer CanPrint, client HttpClient, jar *cookiejar.Jar, csrfCookie *http.Cookie, username, password, skipCode string) []byte {
+	data := url.Values{}
+	data.Set("ajax", "true")
+	data.Set("username", username)
+	data.Set("password", password)
+	data.Set("captcha-skip-code", skipCode)
+	data.Set("guard", getInput(printer, guardLongPrompt, guardShortPrompt))
+	return getResource(printer, client, jar, loginResource, data, csrfCookie)
 }
 
 func discoverCsrfCookie(response *http.Response, jar *cookiejar.Jar) *http.Cookie {
@@ -85,17 +110,26 @@ func discoverCsrfCookie(response *http.Response, jar *cookiejar.Jar) *http.Cooki
 	return nil
 }
 
-func authenticate(client HttpClient, jar *cookiejar.Jar, csrfCookie *http.Cookie) {}
+func authenticate(printer CanPrint, client HttpClient, jar *cookiejar.Jar, csrfCookie *http.Cookie) {
+	username, password, guardResponse := loginWithRecaptcha(printer, client, jar, csrfCookie)
+	guardRoot, err := ajson.Unmarshal(guardResponse)
+	fatalCheck(err)
+	skipCode := guardRoot.MustKey("skip_code").MustArray()[0].MustString()
+	finalResponse := loginWithGuard(printer, client, jar, csrfCookie, username, password, skipCode)
+	finalRoot, err := ajson.Unmarshal(finalResponse)
+	fatalCheck(err)
+	finalRoot.MustKey("goto").MustString()
+}
 
-func getResource(client HttpClient, jar *cookiejar.Jar, resource string, data url.Values, csrfCookie *http.Cookie) []byte {
+func getResource(printer CanPrint, client HttpClient, jar *cookiejar.Jar, resource string, data url.Values, csrfCookie *http.Cookie) []byte {
 	request := createNewRequest(resource, data, csrfCookie)
 	response, body := executeRequest(client, request)
 	if request.URL.Path == response.Request.URL.Path {
 		updateCookies(jar, response)
 	} else {
 		csrfCookie = discoverCsrfCookie(response, jar)
-		authenticate(client, jar, csrfCookie)
-		return getResource(client, jar, resource, data, csrfCookie)
+		authenticate(printer, client, jar, csrfCookie)
+		return getResource(printer, client, jar, resource, data, csrfCookie)
 	}
 	return body
 }

@@ -1,6 +1,7 @@
 package wotwhb
 
 import (
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -21,6 +22,8 @@ type ApiSuite struct {
 }
 
 const testBody = `{"test":"body"}`
+
+func (s *ApiSuite) Printf(format string, args ...interface{}) {}
 
 type GoodHttpClientMock struct{}
 
@@ -51,6 +54,12 @@ func (h BadHttpClientMock) Do(request *http.Request) (*http.Response, error) {
 
 var _ = Suite(&ApiSuite{})
 
+var recaptchaInputTestResults = `test1
+test2
+test3
+test3
+`
+
 func (s *ApiSuite) SetUpTest(c *C) {
 	s.resource = loginResource
 	s.postData = url.Values{}
@@ -62,6 +71,7 @@ func (s *ApiSuite) SetUpTest(c *C) {
 	s.jar, _ = cookiejar.New(&cookiejar.Options{})
 	s.HttpClient = GoodHttpClientMock{}
 	s.BadClient = BadHttpClientMock{}
+	inputReader = (func() io.Reader { return strings.NewReader(recaptchaInputTestResults) })()
 }
 
 func (s *ApiSuite) TestCreateNewGetRequest(c *C) {
@@ -114,11 +124,36 @@ func (s *ApiSuite) TestDiscoverCsrfCookie(c *C) {
 	c.Assert(result.Value, Equals, s.csrfCookie.Value)
 }
 
+func (s *ApiSuite) TestLoginWithRecaptcha(c *C) {
+	c.Assert(
+		func() {
+			loginWithRecaptcha(s, s.HttpClient, s.jar, s.csrfCookie)
+		},
+		PanicMatches,
+		".*EOF.*",
+	)
+}
+
+func (s *ApiSuite) TestLoginWithGuard(c *C) {
+	result := loginWithGuard(s, s.HttpClient, s.jar, s.csrfCookie, "qqq", "qqq", "qqq")
+	c.Assert(result, DeepEquals, []byte(testBody))
+}
+
+func (s *ApiSuite) TestAuthenticate(c *C) {
+	c.Assert(
+		func() {
+			authenticate(s, s.HttpClient, s.jar, s.csrfCookie)
+		},
+		PanicMatches,
+		".*EOF.*",
+	)
+}
+
 func (s *ApiSuite) TestGetResource(c *C) {
-	result := getResource(s.HttpClient, s.jar, s.resource, s.postData, s.csrfCookie)
+	result := getResource(s, s.HttpClient, s.jar, s.resource, s.postData, s.csrfCookie)
 	c.Assert(result, NotNil)
 	c.Assert(func() {
-		getResource(s.BadClient, s.jar, s.resource, s.postData, s.csrfCookie)
+		getResource(s, s.BadClient, s.jar, s.resource, s.postData, s.csrfCookie)
 	},
 		PanicMatches,
 		".*CSRF.*",

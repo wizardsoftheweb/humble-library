@@ -27,7 +27,7 @@ func buildPrompt(prompt string) string {
 func getInput(printer CanPrint, longPrompt, shortPrompt string) string {
 	reader := bufio.NewReader(inputReader)
 	printer.Printf("%s\n%s: ", buildPrompt(longPrompt), shortPrompt)
-	input, err := reader.ReadString('\n')
+	input, _, err := reader.ReadLine()
 	fatalCheck(err)
-	return strings.TrimSpace(input)
+	return strings.TrimSpace(string(input))
 }
