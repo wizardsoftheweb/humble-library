@@ -7,6 +7,7 @@ import (
 func init() {
 	PackageCmd.AddCommand(UpdateCmd)
 	UpdateCmd.AddCommand(UpdateKeyListCmd)
+	UpdateCmd.AddCommand(UpdateOrderListCmd)
 }
 
 var UpdateCmd = &cobra.Command{
@@ -27,4 +28,15 @@ var UpdateKeyListCmd = &cobra.Command{
 
 func UpdateKeyListCmdRun(cmd *cobra.Command, args []string) {
 	updateKeyList(cmd)
+}
+
+var UpdateOrderListCmd = &cobra.Command{
+	Use:   "orders",
+	Short: "Update information about all the available orders (bundle contents, file type variants, links, etc.)",
+	Run:   UpdateOrderListCmdRun,
+}
+
+func UpdateOrderListCmdRun(cmd *cobra.Command, args []string) {
+	keys := loadSavedKeyList()
+	updateAllOrders(cmd, keys)
 }

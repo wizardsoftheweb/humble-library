@@ -46,23 +46,32 @@ func queryIndividualOrder(printer CanPrint, client HttpClient, jar *cookiejar.Ja
 	return getResource(printer, client, jar, orderResource+key, url.Values{}, nil)
 }
 
-func queryAllOrders(printer CanPrint, keys []string) [][]byte {
+func queryAllOrders(printer CanPrint, keys []string) []map[string]interface{} {
 	client, jar := buildSession()
 	size := len(keys)
-	allOrders := make([][]byte, size)
+	allOrders := make([]map[string]interface{}, size)
 	for index, key := range keys {
+		var parsedOrder map[string]interface{}
 		switch {
-		case 0 == index%5:
-			Logger.Debug(fmt.Sprintf("Queried %d out of %d", index, size))
+		case 0 == index%50:
+			Logger.Info(fmt.Sprintf("Queried %d out of %d", index, size))
 			break
 		case 0 == index%10:
 			Logger.Trace(fmt.Sprintf("Queried %d out of %d", index, size))
 			break
-		case 0 == index%50:
-			Logger.Info(fmt.Sprintf("Queried %d out of %d", index, size))
+		case 0 == index%5:
+			Logger.Debug(fmt.Sprintf("Queried %d out of %d", index, size))
 			break
 		}
-		allOrders[index] = queryIndividualOrder(printer, client, jar, key)
+		rawOrder := queryIndividualOrder(printer, client, jar, key)
+		err := json.Unmarshal(rawOrder, &parsedOrder)
+		fatalCheck(err)
+		allOrders[index] = parsedOrder
 	}
 	return allOrders
+}
+
+func updateAllOrders(printer CanPrint, keys []string) {
+	rawOrders := queryAllOrders(printer, keys)
+	writeJsonToFile(rawOrders, filepath.Join(ConfigDirectoryFlagValue, allOrdersFileBasename))
 }
