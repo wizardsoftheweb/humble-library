@@ -6,6 +6,7 @@ import (
 
 func init() {
 	PackageCmd.AddCommand(UpdateCmd)
+	UpdateCmd.AddCommand(UpdateOrderListCmd)
 }
 
 var UpdateCmd = &cobra.Command{
@@ -16,4 +17,14 @@ var UpdateCmd = &cobra.Command{
 
 func UpdateCmdRun(cmd *cobra.Command, args []string) {
 	cmd.Println("rad")
+}
+
+var UpdateOrderListCmd = &cobra.Command{
+	Use:   "orders",
+	Short: "Update the full list of purchases (bundles, store purchases, etc.)",
+	Run:   UpdateOrderListCmdRun,
+}
+
+func UpdateOrderListCmdRun(cmd *cobra.Command, args []string) {
+	updateOrderList(cmd)
 }
