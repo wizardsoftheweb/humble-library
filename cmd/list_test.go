@@ -24,7 +24,7 @@ func (s *ListSuite) TestListContents(c *C) {
 }
 
 func (s *ListSuite) TestAdd(c *C) {
-	s.uniqueList.Add("one", "two", "three", "two", "one")
+	s.uniqueList.Add("one", "two", "three", "two", "one", "")
 	c.Assert(s.uniqueList.Size(), Equals, 3)
 }
 

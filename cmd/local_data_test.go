@@ -35,3 +35,8 @@ func (s *LocalDataSuite) TestQueryAllOrders(c *C) {
 	c.Assert(len(result), Equals, 0)
 
 }
+
+func (s *LocalDataSuite) TestLoadAllOrdersAsStruct(c *C) {
+	result := loadAllOrdersAsStruct()
+	c.Assert(len(result), Equals, 0)
+}
