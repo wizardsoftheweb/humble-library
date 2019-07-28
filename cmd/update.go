@@ -4,7 +4,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var ForceRefreshConfigFlag bool
+
 func init() {
+	UpdateOrderListCmd.PersistentFlags().BoolVarP(
+		&ForceRefreshConfigFlag,
+		"force-refresh",
+		"f",
+		false,
+		"Forces rebuilding any local files",
+	)
 	PackageCmd.AddCommand(UpdateCmd)
 	UpdateCmd.AddCommand(UpdateKeyListCmd)
 	UpdateCmd.AddCommand(UpdateOrderListCmd)
@@ -37,6 +46,11 @@ var UpdateOrderListCmd = &cobra.Command{
 }
 
 func UpdateOrderListCmdRun(cmd *cobra.Command, args []string) {
-	keys := loadSavedKeyList()
+	var keys []string
+	if ForceRefreshConfigFlag {
+		keys = updateKeyList(cmd)
+	} else {
+		keys = loadSavedKeyList()
+	}
 	updateAllOrders(cmd, keys)
 }
