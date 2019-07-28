@@ -1,6 +1,8 @@
 package wotwhb
 
 import (
+	"fmt"
+	"io/ioutil"
 	"net/url"
 	"path/filepath"
 
@@ -12,7 +14,7 @@ func queryOrderList(printer CanPrint) []byte {
 	return getResource(printer, client, jar, keysResource, url.Values{}, nil)
 }
 
-func parseOrderList(rawResponse []byte) []string {
+func parseRawOrderList(rawResponse []byte) []string {
 	nodes, err := ajson.JSONPath(rawResponse, "$..gamekey")
 	fatalCheck(err)
 	keys := make([]string, len(nodes))
@@ -24,7 +26,16 @@ func parseOrderList(rawResponse []byte) []string {
 
 func updateOrderList(printer CanPrint) []string {
 	rawResponse := queryOrderList(printer)
-	keys := parseOrderList(rawResponse)
+	keys := parseRawOrderList(rawResponse)
 	writeJsonToFile(keys, filepath.Join(ConfigDirectoryFlagValue, orderKeyListFileBasename))
 	return keys
+}
+
+func loadSavedOrderList() []string {
+	contents, err := ioutil.ReadFile(filepath.Join(ConfigDirectoryFlagValue, orderKeyListFileBasename))
+	fatalCheck(err)
+	root, err := ajson.Unmarshal(contents)
+	fatalCheck(err)
+	fmt.Println(root)
+	return []string{"cool"}
 }
