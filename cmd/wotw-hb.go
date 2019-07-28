@@ -41,7 +41,7 @@ var PackageCmd = &cobra.Command{
 	Version:          PackageVersion,
 	Short:            "WIP Humble Bundle CLI",
 	PersistentPreRun: PackageCmdPersistentPreRun,
-	Run:              PackageCmdRun,
+	Run:              HelpOnly,
 }
 
 func PackageCmdPersistentPreRun(cmd *cobra.Command, args []string) {
@@ -49,6 +49,6 @@ func PackageCmdPersistentPreRun(cmd *cobra.Command, args []string) {
 	BootstrapConfig(ConfigDirectoryFlagValue, DownloadDirectoryFlagValue)
 }
 
-func PackageCmdRun(cmd *cobra.Command, args []string) {
+func HelpOnly(cmd *cobra.Command, args []string) {
 	_ = cmd.Help()
 }

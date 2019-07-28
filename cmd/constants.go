@@ -18,3 +18,11 @@ const (
 	guardLongPrompt      = "Please check your email for a Humble Bundle account protection code."
 	guardShortPrompt     = "Code"
 )
+
+const (
+	completionFormatType = "StringFromChoices"
+)
+
+var (
+	completionFormatChoices = []string{"bash", "ps", "zsh"}
+)

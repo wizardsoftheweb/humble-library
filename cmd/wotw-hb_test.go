@@ -7,8 +7,6 @@ import (
 
 type WotwHbSuite struct {
 	BaseSuite
-	Command *cobra.Command
-	Args    []string
 }
 
 const defaultVerbosityLevelFlag = 0
@@ -36,7 +34,7 @@ func (s *WotwHbSuite) TestPackageCmdPersistentPreRun(c *C) {
 
 func (s *WotwHbSuite) TestPackageCmdRun(c *C) {
 	c.Assert(PackageCmd.Version, Equals, PackageVersion)
-	PackageCmdRun(s.Command, s.Args)
+	HelpOnly(s.Command, s.Args)
 	c.Assert(PackageCmd.Version, Equals, PackageVersion)
 }
 
