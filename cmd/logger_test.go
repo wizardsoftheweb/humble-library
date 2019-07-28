@@ -1,6 +1,8 @@
 package wotwhb
 
 import (
+	"errors"
+
 	"github.com/sirupsen/logrus"
 	. "gopkg.in/check.v1"
 )
@@ -50,4 +52,21 @@ func (s *LoggerSuite) TestBootstrapping(c *C) {
 		BootstrapLogger(testLevel.input)
 		c.Assert(Logger.Level, Equals, testLevel.level)
 	}
+}
+
+func (s *LoggerSuite) TestFatalCheck(c *C) {
+	c.Assert(
+		func() {
+			fatalCheck(errors.New("whoops"))
+		},
+		PanicMatches,
+		"whoops",
+	)
+	c.Assert(
+		func() {
+			fatalCheck(nil)
+		},
+		Not(PanicMatches),
+		"whoops",
+	)
 }
