@@ -20,15 +20,25 @@ type HbPayee struct {
 	MachineName string `json:"machine_name"`
 }
 
-type HbSubProduct struct {
-	CustomDownloadPageBox string      `json:"custom_download_page_box_html"`
-	Downloads             interface{} `json:"downloads"`
-	HumanName             string      `json:"human_name"`
-	Icon                  string      `json:"icon"`
-	LibraryFamilyName     string      `json:"library_family_name"`
+type HbSubProductDownload struct {
+	AndroidAppOnly        bool        `json:"android_app_only"`
+	DownloadIdentifer     string      `json:"download_identifier"`
+	DownloadStruct        interface{} `json:"download_struct"`
+	DownloadVersionNumber int         `json:"download_version_number"`
 	MachineName           string      `json:"machine_name"`
-	Payee                 HbPayee     `json:"payee"`
-	Url                   string      `json:"url"`
+	OptionsDict           interface{} `json:"options_dict"`
+	Platform              string      `json:"platform"`
+}
+
+type HbSubProduct struct {
+	CustomDownloadPageBox string                 `json:"custom_download_page_box_html"`
+	Downloads             []HbSubProductDownload `json:"downloads"`
+	HumanName             string                 `json:"human_name"`
+	Icon                  string                 `json:"icon"`
+	LibraryFamilyName     string                 `json:"library_family_name"`
+	MachineName           string                 `json:"machine_name"`
+	Payee                 HbPayee                `json:"payee"`
+	Url                   string                 `json:"url"`
 }
 
 type HbOrder struct {
