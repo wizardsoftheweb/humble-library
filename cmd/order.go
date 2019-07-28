@@ -24,14 +24,31 @@ type HbSubProductDownloadOptionsDict struct {
 	Is64BitToggle int `json:"is64bittoggle"`
 }
 
+type HbSubProductDownloadDownloadStructUrl struct {
+	BitTorrent string `json:"bittorrent"`
+	Web        string `json:"web"`
+}
+
+type HbSubProductDownloadDownloadStruct struct {
+	FileSize   int64                                 `json:"file_size"`
+	HumanSize  string                                `json:"human_size"`
+	Md5        string                                `json:"md5"`
+	Name       string                                `json:"name"`
+	Sha1       string                                `json:"sha1"`
+	Url        HbSubProductDownloadDownloadStructUrl `json:"url"`
+	Small      int                                   `json:"small"`
+	Timestamp  int64                                 `json:"timestamp"`
+	UploadedAt time.Time                             `json:"uploaded_at"`
+}
+
 type HbSubProductDownload struct {
-	AndroidAppOnly        bool                            `json:"android_app_only"`
-	DownloadIdentifer     string                          `json:"download_identifier"`
-	DownloadStruct        interface{}                     `json:"download_struct"`
-	DownloadVersionNumber int                             `json:"download_version_number"`
-	MachineName           string                          `json:"machine_name"`
-	OptionsDict           HbSubProductDownloadOptionsDict `json:"options_dict"`
-	Platform              string                          `json:"platform"`
+	AndroidAppOnly        bool                                 `json:"android_app_only"`
+	DownloadIdentifer     string                               `json:"download_identifier"`
+	DownloadStruct        []HbSubProductDownloadDownloadStruct `json:"download_struct"`
+	DownloadVersionNumber int                                  `json:"download_version_number"`
+	MachineName           string                               `json:"machine_name"`
+	OptionsDict           HbSubProductDownloadOptionsDict      `json:"options_dict"`
+	Platform              string                               `json:"platform"`
 }
 
 type HbSubProduct struct {
