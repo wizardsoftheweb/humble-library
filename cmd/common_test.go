@@ -20,4 +20,5 @@ func (s *BaseSuite) SetUpSuite(c *C) {
 	ConfigDirectoryFlagValue = filepath.Join(s.WorkingDir, "config")
 	DownloadDirectoryFlagValue = filepath.Join(s.WorkingDir, "downloads")
 	fatalHandler = func(args ...interface{}) { panic(args[0]) }
+	BootstrapConfig(ConfigDirectoryFlagValue, DownloadDirectoryFlagValue)
 }

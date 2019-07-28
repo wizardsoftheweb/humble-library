@@ -1,7 +1,7 @@
 package wotwhb
 
 import (
-	"fmt"
+	"encoding/json"
 	"io/ioutil"
 	"net/url"
 	"path/filepath"
@@ -34,8 +34,8 @@ func updateOrderList(printer CanPrint) []string {
 func loadSavedOrderList() []string {
 	contents, err := ioutil.ReadFile(filepath.Join(ConfigDirectoryFlagValue, orderKeyListFileBasename))
 	fatalCheck(err)
-	root, err := ajson.Unmarshal(contents)
+	var keys []string
+	err = json.Unmarshal(contents, &keys)
 	fatalCheck(err)
-	fmt.Println(root)
-	return []string{"cool"}
+	return keys
 }
