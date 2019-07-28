@@ -50,5 +50,6 @@ func PackageCmdPersistentPreRun(cmd *cobra.Command, args []string) {
 }
 
 func HelpOnly(cmd *cobra.Command, args []string) {
-	_ = cmd.Help()
+	RunUi()
+	// _ = cmd.Help()
 }

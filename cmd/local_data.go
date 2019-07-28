@@ -76,3 +76,12 @@ func loadAllOrdersAsStruct() []HbOrder {
 	fatalCheck(err)
 	return rawOrders
 }
+
+func loadMungeComponents() *MungeComponents {
+	contents, err := ioutil.ReadFile(filepath.Join(ConfigDirectoryFlagValue, mungeListFileBasename))
+	fatalCheck(err)
+	var rawMunge MungeComponents
+	err = json.Unmarshal(contents, &rawMunge)
+	fatalCheck(err)
+	return &rawMunge
+}
