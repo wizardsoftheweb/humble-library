@@ -67,3 +67,12 @@ func updateAllOrders(printer CanPrint, keys []string) {
 	rawOrders := queryAllOrders(printer, keys)
 	writeJsonToFile(rawOrders, filepath.Join(ConfigDirectoryFlagValue, allOrdersFileBasename))
 }
+
+func loadAllOrdersAsStruct() []HbOrder {
+	contents, err := ioutil.ReadFile(filepath.Join(ConfigDirectoryFlagValue, allOrdersFileBasename))
+	fatalCheck(err)
+	var rawOrders []HbOrder
+	err = json.Unmarshal(contents, &rawOrders)
+	fatalCheck(err)
+	return rawOrders
+}

@@ -28,4 +28,5 @@ func (s *BaseSuite) SetUpSuite(c *C) {
 	writeJsonToFile(savedKeyListTest, filepath.Join(ConfigDirectoryFlagValue, orderKeyListFileBasename))
 	s.Command = &cobra.Command{}
 	s.Args = []string{}
+	writeJsonToFile([]HbOrder{}, filepath.Join(ConfigDirectoryFlagValue, allOrdersFileBasename))
 }

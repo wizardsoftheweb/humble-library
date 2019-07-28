@@ -9,6 +9,7 @@ const (
 	cookieFileBasename       = "cookies.json"
 	orderKeyListFileBasename = "order-keys.json"
 	allOrdersFileBasename    = "all-orders.json"
+	mungeListFileBasename    = "munge-components.json"
 )
 
 var (
