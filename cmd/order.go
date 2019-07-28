@@ -51,8 +51,10 @@ type HbSubProductDownload struct {
 	DownloadStruct        []HbSubProductDownloadDownloadStruct `json:"download_struct"`
 	DownloadVersionNumber int                                  `json:"download_version_number"`
 	MachineName           string                               `json:"machine_name"`
-	OptionsDict           HbSubProductDownloadOptionsDict      `json:"options_dict"`
-	Platform              string                               `json:"platform"`
+	// At least one product returns options_dict = [] which breaks Go
+	// Search for "jacklumber_linux"
+	OptionsDict interface{} `json:"options_dict"`
+	Platform    string      `json:"platform"`
 }
 
 // jq '[.[].subproducts[].payee | keys] | flatten | unique' all-orders.json
