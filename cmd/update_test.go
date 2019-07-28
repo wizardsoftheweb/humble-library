@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"strings"
 
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	. "gopkg.in/check.v1"
 )
@@ -24,6 +25,11 @@ func (s *UpdateSuite) SetUpTest(c *C) {
 	s.Command.SetErr(ioutil.Discard)
 	s.Args = []string{}
 	inputReader = strings.NewReader(inputTestResult + "\n")
+	Logger.SetLevel(logrus.FatalLevel)
+}
+
+func (s *UpdateSuite) TearDownTest(c *C) {
+	Logger.SetLevel(defaultLoggerLevel)
 }
 
 func (s *UpdateSuite) TestUpdateOrderListCmdRun(c *C) {
